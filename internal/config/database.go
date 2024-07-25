@@ -9,7 +9,7 @@ import (
 
 func SetupDatabase() (*gorm.DB, error) {
 	//TODO REMOVE AND MOVE TO EXTERNAL FILE
-	dsn := "MAKE A SECRET"
+	dsn := ""
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect database: %w", err)

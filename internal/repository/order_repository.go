@@ -27,20 +27,6 @@ func (r *OrderRepository) GetByID(id uint) (*models.Order, error) {
 	return &order, result.Error
 }
 
-// GetUserOrders retrieves all orders for a specific user
-func (r *OrderRepository) GetUserOrders(userID uint) ([]models.Order, error) {
-	var orders []models.Order
-	result := r.db.Where("user_id = ?", userID).Find(&orders)
-	return orders, result.Error
-}
-
-// GetUserOrdersByStatus retrieves all orders for a specific user with a given status
-func (r *OrderRepository) GetUserOrdersByStatus(userID uint, status string) ([]models.Order, error) {
-	var orders []models.Order
-	result := r.db.Where("user_id = ? AND status = ?", userID, status).Find(&orders)
-	return orders, result.Error
-}
-
 // UpdateStatus updates the status of an order
 func (r *OrderRepository) UpdateStatus(orderID uint, status string) error {
 	return r.db.Model(&models.Order{}).Where("id = ?", orderID).Update("status", status).Error
@@ -49,24 +35,37 @@ func (r *OrderRepository) UpdateStatus(orderID uint, status string) error {
 // GetUserPositions retrieves the current positions (filled orders) for a user
 func (r *OrderRepository) GetUserPositions(userID uint) ([]models.Order, error) {
 	var orders []models.Order
-	result := r.db.Where("user_id = ? AND status = ? AND side = ?", userID, "FILLED", "BUY").Find(&orders)
+	result := r.db.Where("userid = ? AND status = ? AND side = ?", userID, "FILLED", "BUY").Find(&orders)
 	return orders, result.Error
 }
 
 // GetUserCashBalance calculates the user's cash balance based on their orders
 func (r *OrderRepository) GetUserCashBalance(userID uint) (float64, error) {
-	var balance float64
+	var result struct {
+		Balance float64
+	}
+
 	err := r.db.Model(&models.Order{}).
-		Select("SUM(CASE WHEN side = 'CASH_IN' THEN size WHEN side = 'CASH_OUT' THEN -size WHEN side = 'BUY' THEN -size * price WHEN side = 'SELL' THEN size * price ELSE 0 END) as balance").
-		Where("user_id = ? AND status = ?", userID, "FILLED").
-		Scan(&balance).Error
-	return balance, err
+		Select("COALESCE(SUM(CASE "+
+			"WHEN side = 'CASH_IN' THEN size "+
+			"WHEN side = 'CASH_OUT' THEN -size "+
+			"WHEN side = 'BUY' THEN -size * price "+
+			"WHEN side = 'SELL' THEN size * price "+
+			"ELSE 0 END), 0) as balance").
+		Where("userid = ? AND status = ?", userID, "FILLED").
+		Scan(&result).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return result.Balance, nil
 }
 
 // GetOrdersInDateRange retrieves orders for a user within a specific date range
 func (r *OrderRepository) GetOrdersInDateRange(userID uint, startDate, endDate time.Time) ([]models.Order, error) {
 	var orders []models.Order
-	result := r.db.Where("user_id = ? AND date_time BETWEEN ? AND ?", userID, startDate, endDate).Find(&orders)
+	result := r.db.Where("userid = ? AND datetime BETWEEN ? AND ?", userID, startDate, endDate).Find(&orders)
 	return orders, result.Error
 }
 

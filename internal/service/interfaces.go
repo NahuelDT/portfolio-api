@@ -12,12 +12,8 @@ type OrderServicer interface {
 
 type PortfolioServicer interface {
 	GetPortfolio(userID uint) (*models.Portfolio, error)
-	// Otros métodos del servicio de portfolio
 }
 
 type SearchServicer interface {
 	SearchAssets(query string) ([]SearchResult, error)
-	GetAssetDetails(id uint) (*models.Instrument, error)
-	SearchByTicker(ticker string) (*SearchResult, error)
-	SearchByName(name string) ([]SearchResult, error)
 }

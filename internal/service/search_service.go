@@ -3,7 +3,6 @@ package service
 import (
 	"strings"
 
-	"github.com/NahuelDT/portfolio-api/internal/models"
 	"github.com/NahuelDT/portfolio-api/internal/repository"
 )
 
@@ -35,43 +34,6 @@ func (s *SearchService) SearchAssets(query string) ([]SearchResult, error) {
 	}
 
 	// Convert instruments to search results
-	results := make([]SearchResult, len(instruments))
-	for i, instrument := range instruments {
-		results[i] = SearchResult{
-			ID:     instrument.ID,
-			Ticker: instrument.Ticker,
-			Name:   instrument.Name,
-			Type:   instrument.Type,
-		}
-	}
-
-	return results, nil
-}
-
-func (s *SearchService) GetAssetDetails(id uint) (*models.Instrument, error) {
-	return s.instrumentRepo.FindByID(id)
-}
-
-func (s *SearchService) SearchByTicker(ticker string) (*SearchResult, error) {
-	instrument, err := s.instrumentRepo.FindByTicker(ticker)
-	if err != nil {
-		return nil, err
-	}
-
-	return &SearchResult{
-		ID:     instrument.ID,
-		Ticker: instrument.Ticker,
-		Name:   instrument.Name,
-		Type:   instrument.Type,
-	}, nil
-}
-
-func (s *SearchService) SearchByName(name string) ([]SearchResult, error) {
-	instruments, err := s.instrumentRepo.SearchByName(name)
-	if err != nil {
-		return nil, err
-	}
-
 	results := make([]SearchResult, len(instruments))
 	for i, instrument := range instruments {
 		results[i] = SearchResult{

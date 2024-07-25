@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/NahuelDT/portfolio-api/internal/models"
 	"github.com/NahuelDT/portfolio-api/internal/repository"
 )
@@ -27,6 +29,15 @@ func NewPortfolioService(
 }
 
 func (s *PortfolioService) GetPortfolio(userID uint) (*models.Portfolio, error) {
+	// Check if user exists
+	user, err := s.userRepo.GetByID(userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	if user == nil {
+		return nil, fmt.Errorf("user with ID %d not found", userID)
+	}
+
 	// Get user's cash balance
 	cash, err := s.orderRepo.GetUserCashBalance(userID)
 	if err != nil {

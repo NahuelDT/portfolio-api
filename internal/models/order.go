@@ -1,18 +1,17 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
 type Order struct {
-    ID           uint      `gorm:"primaryKey"`
-    InstrumentID uint      `gorm:"not null"`
-    UserID       uint      `gorm:"not null"`
-    Side         string    `gorm:"not null"`
-    Size         float64   `gorm:"not null"`
-    Price        float64
-    Type         string    `gorm:"not null"`
-    Status       string    `gorm:"not null"`
-    DateTime     time.Time `gorm:"not null"`
+	ID           uint      `gorm:"primaryKey"`
+	InstrumentID uint      `gorm:"column:instrumentid"`
+	UserID       uint      `gorm:"column:userid"`
+	Side         string    `gorm:"column:side"`
+	Size         float64   `gorm:"column:size"`
+	Price        float64   `gorm:"column:price"`
+	Type         string    `gorm:"column:type"`
+	Status       string    `gorm:"column:status"`
+	DateTime     time.Time `gorm:"column:datetime"`
 }
-

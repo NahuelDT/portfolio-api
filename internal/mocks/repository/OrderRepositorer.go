@@ -88,66 +88,6 @@ func (_m *OrderRepositorer) GetUserCashBalance(userID uint) (float64, error) {
 	return r0, r1
 }
 
-// GetUserOrders provides a mock function with given fields: userID
-func (_m *OrderRepositorer) GetUserOrders(userID uint) ([]models.Order, error) {
-	ret := _m.Called(userID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetUserOrders")
-	}
-
-	var r0 []models.Order
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) ([]models.Order, error)); ok {
-		return rf(userID)
-	}
-	if rf, ok := ret.Get(0).(func(uint) []models.Order); ok {
-		r0 = rf(userID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Order)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(userID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetUserOrdersByStatus provides a mock function with given fields: userID, status
-func (_m *OrderRepositorer) GetUserOrdersByStatus(userID uint, status string) ([]models.Order, error) {
-	ret := _m.Called(userID, status)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetUserOrdersByStatus")
-	}
-
-	var r0 []models.Order
-	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, string) ([]models.Order, error)); ok {
-		return rf(userID, status)
-	}
-	if rf, ok := ret.Get(0).(func(uint, string) []models.Order); ok {
-		r0 = rf(userID, status)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Order)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(uint, string) error); ok {
-		r1 = rf(userID, status)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // GetUserPositions provides a mock function with given fields: userID
 func (_m *OrderRepositorer) GetUserPositions(userID uint) ([]models.Order, error) {
 	ret := _m.Called(userID)
