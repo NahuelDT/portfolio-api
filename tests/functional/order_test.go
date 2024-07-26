@@ -224,6 +224,76 @@ func TestLimitBuyOrder(t *testing.T) {
 	db.Unscoped().Delete(user)
 }
 
+func TestLimitSellOrder(t *testing.T) {
+	db, orderService, orderRepo, userRepo, instrumentRepo, marketDataRepo := setupTest(t)
+
+	user := &models.User{Email: "test@example.com", AccountNumber: "TEST123"}
+	err := userRepo.Create(user)
+	assert.NoError(t, err)
+
+	cashInOrder := &models.Order{
+		UserID:       user.ID,
+		InstrumentID: 66,
+		Side:         "CASH_IN",
+		Type:         "MARKET",
+		Size:         3000,
+	}
+	err = orderService.PlaceOrder(cashInOrder, 0)
+	assert.NoError(t, err)
+
+	instrument := &models.Instrument{Ticker: "AAPL", Name: "Apple Inc.", Type: "STOCK"}
+	err = instrumentRepo.Create(instrument)
+	assert.NoError(t, err)
+
+	marketData := &models.MarketData{
+		InstrumentID: instrument.ID,
+		Close:        150.0,
+		DateTime:     time.Now(),
+	}
+	err = marketDataRepo.Create(marketData)
+	assert.NoError(t, err)
+
+	buyOrder := &models.Order{
+		UserID:       user.ID,
+		InstrumentID: instrument.ID,
+		Side:         "BUY",
+		Type:         "MARKET",
+		Size:         10,
+	}
+	err = orderService.PlaceOrder(buyOrder, 0)
+	assert.NoError(t, err)
+
+	balanceAfterBuy, err := orderRepo.GetUserCashBalance(user.ID)
+	assert.NoError(t, err)
+	assert.InDelta(t, 1500.0, balanceAfterBuy, 0.01)
+
+	limitSellOrder := &models.Order{
+		UserID:       user.ID,
+		InstrumentID: instrument.ID,
+		Side:         "SELL",
+		Type:         "LIMIT",
+		Size:         5,
+		Price:        160.0,
+	}
+	err = orderService.PlaceOrder(limitSellOrder, 0)
+	assert.NoError(t, err)
+
+	createdOrder, err := orderRepo.GetByID(limitSellOrder.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, "NEW", createdOrder.Status)
+
+	finalBalance, err := orderRepo.GetUserCashBalance(user.ID)
+	assert.NoError(t, err)
+	assert.InDelta(t, 1500.0, finalBalance, 0.01)
+
+	db.Unscoped().Delete(limitSellOrder)
+	db.Unscoped().Delete(buyOrder)
+	db.Unscoped().Delete(marketData)
+	db.Unscoped().Delete(instrument)
+	db.Unscoped().Delete(cashInOrder)
+	db.Unscoped().Delete(user)
+}
+
 func TestInsufficientFundsOrder(t *testing.T) {
 	db, orderService, orderRepo, userRepo, instrumentRepo, marketDataRepo := setupTest(t)
 
