@@ -12,6 +12,24 @@ type MarketDataRepositorer struct {
 	mock.Mock
 }
 
+// Create provides a mock function with given fields: marketData
+func (_m *MarketDataRepositorer) Create(marketData *models.MarketData) error {
+	ret := _m.Called(marketData)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.MarketData) error); ok {
+		r0 = rf(marketData)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetLatestMarketData provides a mock function with given fields: instrumentID
 func (_m *MarketDataRepositorer) GetLatestMarketData(instrumentID uint) (*models.MarketData, error) {
 	ret := _m.Called(instrumentID)

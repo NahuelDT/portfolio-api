@@ -12,6 +12,24 @@ type InstrumentRepositorer struct {
 	mock.Mock
 }
 
+// Create provides a mock function with given fields: instrument
+func (_m *InstrumentRepositorer) Create(instrument *models.Instrument) error {
+	ret := _m.Called(instrument)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.Instrument) error); ok {
+		r0 = rf(instrument)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetByID provides a mock function with given fields: id
 func (_m *InstrumentRepositorer) GetByID(id uint) (*models.Instrument, error) {
 	ret := _m.Called(id)

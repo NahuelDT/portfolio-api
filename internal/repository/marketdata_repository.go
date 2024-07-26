@@ -21,3 +21,7 @@ func (r *MarketDataRepository) GetLatestMarketData(instrumentID uint) (*models.M
 		First(&marketData)
 	return &marketData, result.Error
 }
+
+func (r *MarketDataRepository) Create(marketData *models.MarketData) error {
+	return r.db.Create(marketData).Error
+}

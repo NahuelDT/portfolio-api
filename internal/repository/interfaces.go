@@ -6,6 +6,7 @@ import (
 
 type UserRepositorer interface {
 	GetByID(id uint) (*models.User, error)
+	Create(user *models.User) error
 }
 
 type OrderRepositorer interface {
@@ -19,8 +20,10 @@ type OrderRepositorer interface {
 type InstrumentRepositorer interface {
 	GetByID(id uint) (*models.Instrument, error)
 	Search(query string) ([]models.Instrument, error)
+	Create(instrument *models.Instrument) error
 }
 
 type MarketDataRepositorer interface {
 	GetLatestMarketData(instrumentID uint) (*models.MarketData, error)
+	Create(marketData *models.MarketData) error
 }

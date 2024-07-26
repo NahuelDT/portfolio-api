@@ -11,7 +11,6 @@ import (
 )
 
 func TestPlaceOrder(t *testing.T) {
-	// setUp function to reinitialize mocks and service before each test
 	setUp := func() (*mocks.OrderRepositorer, *mocks.UserRepositorer, *mocks.InstrumentRepositorer, *mocks.MarketDataRepositorer, *OrderService) {
 		mockOrderRepo := new(mocks.OrderRepositorer)
 		mockUserRepo := new(mocks.UserRepositorer)

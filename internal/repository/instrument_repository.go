@@ -26,3 +26,7 @@ func (r *InstrumentRepository) Search(query string) ([]models.Instrument, error)
 	result := r.db.Where("ticker LIKE ? OR name LIKE ?", "%"+query+"%", "%"+query+"%").Find(&instruments)
 	return instruments, result.Error
 }
+
+func (r *InstrumentRepository) Create(instrument *models.Instrument) error {
+	return r.db.Create(instrument).Error
+}

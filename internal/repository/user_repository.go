@@ -19,3 +19,7 @@ func (r *UserRepository) GetByID(id uint) (*models.User, error) {
 	result := r.db.First(&user, id)
 	return &user, result.Error
 }
+
+func (r *UserRepository) Create(user *models.User) error {
+	return r.db.Create(user).Error
+}
