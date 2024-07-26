@@ -88,12 +88,12 @@ func (_m *OrderRepositorer) GetUserCashBalance(userID uint) (float64, error) {
 	return r0, r1
 }
 
-// GetUserPositions provides a mock function with given fields: userID
-func (_m *OrderRepositorer) GetUserPositions(userID uint) ([]models.Order, error) {
+// GetUserFilledOrders provides a mock function with given fields: userID
+func (_m *OrderRepositorer) GetUserFilledOrders(userID uint) ([]models.Order, error) {
 	ret := _m.Called(userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetUserPositions")
+		panic("no return value specified for GetUserFilledOrders")
 	}
 
 	var r0 []models.Order

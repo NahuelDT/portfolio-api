@@ -12,12 +12,12 @@ type InstrumentRepositorer struct {
 	mock.Mock
 }
 
-// FindByID provides a mock function with given fields: id
-func (_m *InstrumentRepositorer) FindByID(id uint) (*models.Instrument, error) {
+// GetByID provides a mock function with given fields: id
+func (_m *InstrumentRepositorer) GetByID(id uint) (*models.Instrument, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByID")
+		panic("no return value specified for GetByID")
 	}
 
 	var r0 *models.Instrument

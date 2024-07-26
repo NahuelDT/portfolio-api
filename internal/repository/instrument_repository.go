@@ -13,8 +13,8 @@ func NewInstrumentRepository(db *gorm.DB) *InstrumentRepository {
 	return &InstrumentRepository{db: db}
 }
 
-// FindByID retrieves an instrument by its ID
-func (r *InstrumentRepository) FindByID(id uint) (*models.Instrument, error) {
+// GetByID retrieves an instrument by its ID
+func (r *InstrumentRepository) GetByID(id uint) (*models.Instrument, error) {
 	var instrument models.Instrument
 	result := r.db.First(&instrument, id)
 	return &instrument, result.Error

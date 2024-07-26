@@ -48,24 +48,6 @@ func (_m *OrderServicer) PlaceOrder(order *models.Order, totalAmount float64) er
 	return r0
 }
 
-// updateUserPositions provides a mock function with given fields: order
-func (_m *OrderServicer) updateUserPositions(order *models.Order) error {
-	ret := _m.Called(order)
-
-	if len(ret) == 0 {
-		panic("no return value specified for updateUserPositions")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.Order) error); ok {
-		r0 = rf(order)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 // NewOrderServicer creates a new instance of OrderServicer. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewOrderServicer(t interface {

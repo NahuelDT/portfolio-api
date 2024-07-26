@@ -44,8 +44,8 @@ func (s *PortfolioService) GetPortfolio(userID uint) (*models.Portfolio, error) 
 		return nil, err
 	}
 
-	// Get user's positions
-	positions, err := s.orderRepo.GetUserPositions(userID)
+	// Get user's filled orders
+	orders, err := s.orderRepo.GetUserFilledOrders(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,30 +55,53 @@ func (s *PortfolioService) GetPortfolio(userID uint) (*models.Portfolio, error) 
 		Assets:        make([]models.PortfolioAsset, 0),
 	}
 
-	for _, position := range positions {
-		instrument, err := s.instrumentRepo.FindByID(position.InstrumentID)
-		if err != nil {
-			return nil, err
+	// Calculate net positions
+	positions := make(map[uint]float64)
+	for _, order := range orders {
+		if order.Side == "BUY" {
+			positions[order.InstrumentID] += order.Size
+		} else if order.Side == "SELL" {
+			positions[order.InstrumentID] -= order.Size
 		}
+	}
 
-		marketData, err := s.marketDataRepo.GetLatestMarketData(position.InstrumentID)
-		if err != nil {
-			return nil, err
+	for instrumentID, netQuantity := range positions {
+		if netQuantity > 0 {
+			instrument, err := s.instrumentRepo.GetByID(instrumentID)
+			if err != nil {
+				return nil, err
+			}
+
+			marketData, err := s.marketDataRepo.GetLatestMarketData(instrumentID)
+			if err != nil {
+				return nil, err
+			}
+
+			// Calculate average purchase price
+			totalCost := 0.0
+			totalQuantity := 0.0
+			for _, order := range orders {
+				if order.InstrumentID == instrumentID && order.Side == "BUY" {
+					totalCost += order.Price * order.Size
+					totalQuantity += order.Size
+				}
+			}
+			avgPrice := totalCost / totalQuantity
+
+			totalValue := netQuantity * marketData.Close
+			returnPercentage := (marketData.Close - avgPrice) / avgPrice * 100
+
+			asset := models.PortfolioAsset{
+				Ticker:     instrument.Ticker,
+				Name:       instrument.Name,
+				Quantity:   netQuantity,
+				TotalValue: totalValue,
+				Return:     returnPercentage,
+			}
+
+			portfolio.Assets = append(portfolio.Assets, asset)
+			portfolio.TotalValue += totalValue
 		}
-
-		totalValue := position.Size * marketData.Close
-		returnPercentage := (marketData.Close - position.Price) / position.Price * 100
-
-		asset := models.PortfolioAsset{
-			Ticker:     instrument.Ticker,
-			Name:       instrument.Name,
-			Quantity:   position.Size,
-			TotalValue: totalValue,
-			Return:     returnPercentage,
-		}
-
-		portfolio.Assets = append(portfolio.Assets, asset)
-		portfolio.TotalValue += totalValue
 	}
 
 	portfolio.TotalValue += cash

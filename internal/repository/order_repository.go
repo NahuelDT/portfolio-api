@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"time"
-
 	"github.com/NahuelDT/portfolio-api/internal/models"
 	"gorm.io/gorm"
 )
@@ -32,10 +30,10 @@ func (r *OrderRepository) UpdateStatus(orderID uint, status string) error {
 	return r.db.Model(&models.Order{}).Where("id = ?", orderID).Update("status", status).Error
 }
 
-// GetUserPositions retrieves the current positions (filled orders) for a user
-func (r *OrderRepository) GetUserPositions(userID uint) ([]models.Order, error) {
+// GetUserCashBalance gets the user's FILLED orders
+func (r *OrderRepository) GetUserFilledOrders(userID uint) ([]models.Order, error) {
 	var orders []models.Order
-	result := r.db.Where("userid = ? AND status = ? AND side = ?", userID, "FILLED", "BUY").Find(&orders)
+	result := r.db.Where("userid = ? AND status = ?", userID, "FILLED").Find(&orders)
 	return orders, result.Error
 }
 
@@ -60,23 +58,4 @@ func (r *OrderRepository) GetUserCashBalance(userID uint) (float64, error) {
 	}
 
 	return result.Balance, nil
-}
-
-// GetOrdersInDateRange retrieves orders for a user within a specific date range
-func (r *OrderRepository) GetOrdersInDateRange(userID uint, startDate, endDate time.Time) ([]models.Order, error) {
-	var orders []models.Order
-	result := r.db.Where("userid = ? AND datetime BETWEEN ? AND ?", userID, startDate, endDate).Find(&orders)
-	return orders, result.Error
-}
-
-// CancelOrder cancels an order by updating its status
-func (r *OrderRepository) CancelOrder(orderID uint) error {
-	return r.db.Model(&models.Order{}).Where("id = ? AND status = ?", orderID, "NEW").Update("status", "CANCELLED").Error
-}
-
-// GetPendingOrders retrieves all pending (NEW) orders
-func (r *OrderRepository) GetPendingOrders() ([]models.Order, error) {
-	var orders []models.Order
-	result := r.db.Where("status = ?", "NEW").Find(&orders)
-	return orders, result.Error
 }

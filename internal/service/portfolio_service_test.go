@@ -36,10 +36,10 @@ func TestGetPortfolio(t *testing.T) {
 
 		mockUserRepo.On("GetByID", userID).Return(mockUser, nil)
 		mockOrderRepo.On("GetUserCashBalance", userID).Return(float64(1000), nil)
-		mockOrderRepo.On("GetUserPositions", userID).Return(mockOrders, nil)
+		mockOrderRepo.On("GetUserFilledOrders", userID).Return(mockOrders, nil)
 
 		for _, order := range mockOrders {
-			mockInstrumentRepo.On("FindByID", order.InstrumentID).Return(mockInstruments[order.InstrumentID], nil)
+			mockInstrumentRepo.On("GetByID", order.InstrumentID).Return(mockInstruments[order.InstrumentID], nil)
 			mockMarketDataRepo.On("GetLatestMarketData", order.InstrumentID).Return(mockMarketData[order.InstrumentID], nil)
 		}
 
@@ -89,7 +89,7 @@ func TestGetPortfolio(t *testing.T) {
 
 		mockUserRepo.On("GetByID", userID).Return(mockUser, nil)
 		mockOrderRepo.On("GetUserCashBalance", userID).Return(float64(500), nil)
-		mockOrderRepo.On("GetUserPositions", userID).Return([]models.Order{}, nil)
+		mockOrderRepo.On("GetUserFilledOrders", userID).Return([]models.Order{}, nil)
 
 		portfolio, err := portfolioService.GetPortfolio(userID)
 
