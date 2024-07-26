@@ -36,7 +36,7 @@ func (h *OrderHandler) PlaceOrder(c *gin.Context) {
 }
 
 func (h *OrderHandler) CancelOrder(c *gin.Context) {
-	orderID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	orderID, err := strconv.ParseUint(c.Param("orderID"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid order ID"})
 		return

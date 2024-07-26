@@ -29,7 +29,7 @@ Portfolio API es un sistema de gestión de portafolios financieros que permite a
 
 1. Clonar el repositorio:
 ```bash 
-git clone https://github.com/yourusername/portfolio-api.git
+git clone https://github.com/NahuelDT/portfolio-api.git
 ```
 2. Navegar al directorio del proyecto:
 ```bash 
@@ -113,6 +113,7 @@ portfolio-api/
 Ejemplos de endpoints:
 
 - `POST /api/orders`: Crear una nueva orden
+- `POST /orders/:orderID/cancel`: Cancelar una orden
 - `GET /api/portfolio/{userID}`: Obtener el portafolio de un usuario
 - `GET /api/instruments`: Listar instrumentos disponibles
 
@@ -126,3 +127,7 @@ Para ejecutar las pruebas funcionales:
 ```bash 
 go test ./tests/functional/...
 ```
+
+## Postman Collection
+
+Para facilitar las pruebas y la interacción con la API, `Portfolio_API.postman_collection.json` es la colección de Postman. Esta colección incluye todos los endpoints disponibles con ejemplos de requests preconfigurados.

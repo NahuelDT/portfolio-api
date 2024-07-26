@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "e627a7db-2a87-4430-972f-ff49f61a4528",
+		"name": "Portfolio API",
+		"description": "Collection for interacting with the Portfolio API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5125234"
+	},
+	"item": [
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create Market Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": {\n    \"userID\": 1,\n    \"instrumentID\": 1,\n    \"side\": \"BUY\",\n    \"type\": \"MARKET\",\n    \"size\": 10\n  },\n  \"totalAmount\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/order",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"order"
+							]
+						},
+						"description": "Creates a new market buy order."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Limit Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": {\n    \"userID\": 1,\n    \"instrumentID\": 1,\n    \"side\": \"SELL\",\n    \"type\": \"LIMIT\",\n    \"size\": 5,\n    \"price\": 150.00\n  },\n  \"totalAmount\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/order",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"order"
+							]
+						},
+						"description": "Creates a new market buy order."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/orders/83/cancel",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"83",
+								"cancel"
+							]
+						},
+						"description": "Cancels an existing order."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Portfolio",
+			"item": [
+				{
+					"name": "Get Portfolio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/portfolio/{{userId}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"portfolio",
+								"{{userId}}"
+							]
+						},
+						"description": "Retrieves the current portfolio of a user."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Search Instruments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/search?q={{query}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{query}}"
+								}
+							]
+						},
+						"description": "Searches for instruments based on a query term."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1"
+		},
+		{
+			"key": "orderId",
+			"value": "7"
+		}
+	]
+}
