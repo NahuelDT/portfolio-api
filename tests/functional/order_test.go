@@ -150,7 +150,6 @@ func TestMarketSellOrder(t *testing.T) {
 func TestLimitBuyOrder(t *testing.T) {
 	db, orderService, orderRepo, userRepo, instrumentRepo, marketDataRepo := setupTest(t)
 
-	// Crear usuario y dar saldo
 	user := &models.User{Email: "test@example.com", AccountNumber: "TEST123"}
 	err := userRepo.Create(user)
 	assert.NoError(t, err)
@@ -165,12 +164,10 @@ func TestLimitBuyOrder(t *testing.T) {
 	err = orderService.PlaceOrder(cashInOrder, 0)
 	assert.NoError(t, err)
 
-	// Crear instrumento
 	instrument := &models.Instrument{Ticker: "AAPL", Name: "Apple Inc.", Type: "STOCK"}
 	err = instrumentRepo.Create(instrument)
 	assert.NoError(t, err)
 
-	// Crear datos de mercado iniciales
 	marketData := &models.MarketData{
 		InstrumentID: instrument.ID,
 		Close:        150.0,
@@ -179,7 +176,6 @@ func TestLimitBuyOrder(t *testing.T) {
 	err = marketDataRepo.Create(marketData)
 	assert.NoError(t, err)
 
-	// Crear orden LIMIT de compra
 	limitOrder := &models.Order{
 		UserID:       user.ID,
 		InstrumentID: instrument.ID,
@@ -191,12 +187,10 @@ func TestLimitBuyOrder(t *testing.T) {
 	err = orderService.PlaceOrder(limitOrder, 0)
 	assert.NoError(t, err)
 
-	// Verificar que la orden está en estado NEW
 	createdOrder, err := orderRepo.GetByID(limitOrder.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, "NEW", createdOrder.Status)
 
-	// Simular cambio en el precio de mercado
 	newMarketData := &models.MarketData{
 		InstrumentID: instrument.ID,
 		Close:        145.0,
@@ -205,17 +199,14 @@ func TestLimitBuyOrder(t *testing.T) {
 	err = marketDataRepo.Create(newMarketData)
 	assert.NoError(t, err)
 
-	// Verificar que la orden LIMIT sigue en estado NEW
 	limitOrderAfterPriceChange, err := orderRepo.GetByID(limitOrder.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, "NEW", limitOrderAfterPriceChange.Status)
 
-	// Verificar el saldo del usuario
 	balance, err := orderRepo.GetUserCashBalance(user.ID)
 	assert.NoError(t, err)
-	assert.InDelta(t, 3000.0, balance, 0.01) // El saldo no debería haber cambiado
+	assert.InDelta(t, 3000.0, balance, 0.01)
 
-	// Limpiar datos de prueba
 	db.Unscoped().Delete(limitOrder)
 	db.Unscoped().Delete(newMarketData)
 	db.Unscoped().Delete(marketData)
@@ -351,7 +342,6 @@ func TestInsufficientFundsOrder(t *testing.T) {
 func TestCancelOrder(t *testing.T) {
 	db, orderService, orderRepo, userRepo, instrumentRepo, marketDataRepo := setupTest(t)
 
-	// Crear usuario y dar saldo
 	user := &models.User{Email: "test@example.com", AccountNumber: "TEST123"}
 	err := userRepo.Create(user)
 	assert.NoError(t, err)
@@ -366,12 +356,10 @@ func TestCancelOrder(t *testing.T) {
 	err = orderService.PlaceOrder(cashInOrder, 0)
 	assert.NoError(t, err)
 
-	// Crear instrumento
 	instrument := &models.Instrument{Ticker: "AAPL", Name: "Apple Inc.", Type: "STOCK"}
 	err = instrumentRepo.Create(instrument)
 	assert.NoError(t, err)
 
-	// Crear datos de mercado
 	marketData := &models.MarketData{
 		InstrumentID: instrument.ID,
 		Close:        150.0,
@@ -380,7 +368,6 @@ func TestCancelOrder(t *testing.T) {
 	err = marketDataRepo.Create(marketData)
 	assert.NoError(t, err)
 
-	// Crear orden LIMIT
 	limitOrder := &models.Order{
 		UserID:       user.ID,
 		InstrumentID: instrument.ID,
@@ -392,26 +379,21 @@ func TestCancelOrder(t *testing.T) {
 	err = orderService.PlaceOrder(limitOrder, 0)
 	assert.NoError(t, err)
 
-	// Verificar que la orden está en estado NEW
 	createdOrder, err := orderRepo.GetByID(limitOrder.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, "NEW", createdOrder.Status)
 
-	// Cancelar la orden
 	err = orderService.CancelOrder(limitOrder.ID)
 	assert.NoError(t, err)
 
-	// Verificar que la orden ha sido cancelada
 	cancelledOrder, err := orderRepo.GetByID(limitOrder.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, "CANCELLED", cancelledOrder.Status)
 
-	// Verificar que el saldo no ha cambiado
 	balance, err := orderRepo.GetUserCashBalance(user.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, 3000.0, balance)
 
-	// Limpiar datos de prueba
 	db.Unscoped().Delete(limitOrder)
 	db.Unscoped().Delete(marketData)
 	db.Unscoped().Delete(instrument)
